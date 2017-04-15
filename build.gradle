@@ -1,0 +1,48 @@
+buildscript {
+    ext {
+        springBootVersion = '1.5.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+
+jar {
+    baseName = 'api'
+    version = '0.0.1-SNAPSHOT'
+}
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+
+dependencies {
+    compile('com.google.code.gson:gson:2.6.2')
+    compile('com.google.guava:guava:19.0')
+    compile('org.apache.commons:commons-lang3:3.4')
+
+    compile('net.kaczmarzyk:specification-arg-resolver:0.9.1')
+
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
+    compile('org.springframework.data:spring-data-jpa')
+
+    compile('mysql:mysql-connector-java')
+
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
