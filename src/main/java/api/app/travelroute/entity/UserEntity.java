@@ -1,7 +1,10 @@
 package api.app.travelroute.entity;
 
+import api.base.common.OutputEntityJsonView;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
-import java.io.Serializable;
 
 /**
  * Created by cc on 2017/4/16.
@@ -10,19 +13,22 @@ import java.io.Serializable;
 @Table(name = "user", schema = "travel_grad", catalog = "")
 public class UserEntity {
     private long id;
-    private String name;
-    private String username;
-    private String phone;
-    private String email;
-    private String password;
-    private String avatar;
-    private String intro;
-    private Role role;
-    private long createTime;
-    private long updateTime;
+    private String name = "";
+    private String username = "";
+    private String phone = "";
+    private String email = "";
+    private String password = "";
+    private String avatar = "";
+    private String intro = "";
+    private Role role = Role.ROLE_USER;
+    private long createTime = 0;
+    private long updateTime = 0;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @JsonProperty("id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getId() {
         return id;
     }
@@ -33,6 +39,8 @@ public class UserEntity {
 
     @Basic
     @Column(name = "name", nullable = false, length = 199)
+    @JsonProperty("name")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getName() {
         return name;
     }
@@ -43,6 +51,8 @@ public class UserEntity {
 
     @Basic
     @Column(name = "username", nullable = false, length = 255)
+    @JsonProperty("username")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getUsername() {
         return username;
     }
@@ -53,6 +63,8 @@ public class UserEntity {
 
     @Basic
     @Column(name = "phone", nullable = false, length = 80)
+    @JsonProperty("phone")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getPhone() {
         return phone;
     }
@@ -63,6 +75,8 @@ public class UserEntity {
 
     @Basic
     @Column(name = "email", nullable = false, length = 255)
+    @JsonProperty("email")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getEmail() {
         return email;
     }
@@ -83,6 +97,8 @@ public class UserEntity {
 
     @Basic
     @Column(name = "avatar", nullable = false, length = 299)
+    @JsonProperty("avatar")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getAvatar() {
         return avatar;
     }
@@ -93,6 +109,8 @@ public class UserEntity {
 
     @Basic
     @Column(name = "intro", nullable = false, length = 255)
+    @JsonProperty("intro")
+    @JsonView({OutputEntityJsonView.Detail.class})
     public String getIntro() {
         return intro;
     }
@@ -103,6 +121,8 @@ public class UserEntity {
 
     @Basic
     @Column(name = "role", nullable = false)
+    @JsonProperty("role")
+    @JsonView({OutputEntityJsonView.Detail.class})
     @Enumerated(EnumType.STRING)
     public Role getRole() {
         return role;
@@ -168,5 +188,22 @@ public class UserEntity {
         result = 31 * result + (int) (createTime ^ (createTime >>> 32));
         result = 31 * result + (int) (updateTime ^ (updateTime >>> 32));
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", intro='" + intro + '\'' +
+                ", role=" + role +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                '}';
     }
 }

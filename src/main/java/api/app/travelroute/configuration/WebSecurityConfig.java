@@ -1,6 +1,5 @@
 package api.app.travelroute.configuration;
 
-import api.app.travelroute.entity.Role;
 import api.base.common.PasswordHashEncoder;
 import api.app.travelroute.service.UserAuthService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,9 +7,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
+import static api.app.travelroute.entity.Role.ROLE_ADMIN;
+import static api.app.travelroute.entity.Role.ROLE_GUIDE;
 
 /**
  * Created by cc on 16/6/10.
@@ -20,6 +23,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class WebSecurityConfig {
 
     @Configuration
+    @EnableGlobalMethodSecurity(prePostEnabled = true)
     @Order(1)
     public static class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -35,9 +39,9 @@ public class WebSecurityConfig {
                     .antMatchers("/api/v1/user/**").authenticated()
                     .antMatchers("/api/v1/order/**").authenticated()//order api需要认证
                     .and()
-                    .antMatcher("/api/v1/dest/**").authorizeRequests().antMatchers(HttpMethod.GET).permitAll().anyRequest().hasRole(String.valueOf(Role.ADMIN))//旅游产品api
+                    .antMatcher("/api/v1/dest/**").authorizeRequests().antMatchers(HttpMethod.GET).permitAll().anyRequest().hasAnyRole(String.valueOf(ROLE_ADMIN), String.valueOf(ROLE_GUIDE))//旅游产品api
                     .and()
-                    .antMatcher("/api/v1/route/**").authorizeRequests().antMatchers(HttpMethod.GET).permitAll().anyRequest().authenticated()//路线 api
+                    .antMatcher("/api/v1/route/**").authorizeRequests().antMatchers(HttpMethod.GET).permitAll().anyRequest().hasAnyRole(String.valueOf(ROLE_ADMIN), String.valueOf(ROLE_GUIDE))//路线 api
                     .and()
                     .antMatcher("/api/**").authorizeRequests().anyRequest().authenticated()//默认其他所有api均需认证
                     .and()

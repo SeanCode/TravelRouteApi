@@ -1,6 +1,12 @@
 package api.app.travelroute.entity;
 
+import api.base.common.OutputEntityJsonView;
+import api.base.common.Util;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by cc on 2017/4/16.
@@ -9,18 +15,23 @@ import javax.persistence.*;
 @Table(name = "route", schema = "travel_grad", catalog = "")
 public class RouteEntity {
     private long id;
-    private long destId;
-    private String name;
-    private double price;
-    private String intro;
-    private String info;
-    private String notice;
-    private String img;
-    private long createTime;
-    private long updateTime;
+    private long destId = 0;
+    private String name = "";
+    private double price = 0.00;
+    private String intro = "";
+    private String info = "";
+    private String notice = "";
+    private String img = "";
+    private long createTime = 0;
+    private long updateTime = 0;
+
+    private List<String> imgList;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @JsonProperty("id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getId() {
         return id;
     }
@@ -31,6 +42,8 @@ public class RouteEntity {
 
     @Basic
     @Column(name = "dest_id", nullable = false)
+    @JsonProperty("dest_id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getDestId() {
         return destId;
     }
@@ -41,6 +54,8 @@ public class RouteEntity {
 
     @Basic
     @Column(name = "name", nullable = false, length = 199)
+    @JsonProperty("name")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getName() {
         return name;
     }
@@ -51,6 +66,8 @@ public class RouteEntity {
 
     @Basic
     @Column(name = "price", nullable = false, precision = 0)
+    @JsonProperty("price")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public double getPrice() {
         return price;
     }
@@ -61,6 +78,8 @@ public class RouteEntity {
 
     @Basic
     @Column(name = "intro", nullable = false, length = 199)
+    @JsonProperty("intro")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getIntro() {
         return intro;
     }
@@ -71,6 +90,8 @@ public class RouteEntity {
 
     @Basic
     @Column(name = "info", nullable = false, length = 255)
+    @JsonProperty("info")
+    @JsonView({OutputEntityJsonView.Detail.class})
     public String getInfo() {
         return info;
     }
@@ -81,6 +102,8 @@ public class RouteEntity {
 
     @Basic
     @Column(name = "notice", nullable = false, length = 255)
+    @JsonProperty("notice")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getNotice() {
         return notice;
     }
@@ -91,8 +114,12 @@ public class RouteEntity {
 
     @Basic
     @Column(name = "img", nullable = false, length = 255)
+    @JsonProperty("img")
+    @JsonView({OutputEntityJsonView.Basic.class})
     public String getImg() {
-        return img;
+
+        imgList = Util.explodeUrlString(img);
+        return imgList.size() > 0 ? imgList.get(0) : "";
     }
 
     public void setImg(String img) {
@@ -101,6 +128,8 @@ public class RouteEntity {
 
     @Basic
     @Column(name = "create_time", nullable = false)
+    @JsonProperty("create_time")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getCreateTime() {
         return createTime;
     }
@@ -111,12 +140,26 @@ public class RouteEntity {
 
     @Basic
     @Column(name = "update_time", nullable = false)
+    @JsonProperty("update_time")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @Transient
+    @JsonProperty("img_list")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public List<String> getImgList() {
+        imgList = Util.explodeUrlString(img);
+        return imgList;
+    }
+
+    public void setImgList(List<String> imgList) {
+        this.imgList = imgList;
     }
 
     @Override

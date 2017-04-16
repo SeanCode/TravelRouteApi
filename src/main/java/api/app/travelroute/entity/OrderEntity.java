@@ -1,5 +1,11 @@
 package api.app.travelroute.entity;
 
+import api.base.common.OutputEntityJsonView;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import javax.persistence.*;
 
 /**
@@ -9,20 +15,28 @@ import javax.persistence.*;
 @Table(name = "order", schema = "travel_grad", catalog = "")
 public class OrderEntity {
     private long id;
-    private long destId;
-    private long routeId;
-    private long beginTime;
-    private long endTime;
-    private int count;
-    private double money;
-    private String username;
-    private String phone;
-    private String note;
-    private long createTime;
-    private long updateTime;
+    private long userId = 0;
+    private long destId = 0;
+    private long routeId = 0;
+    private long beginTime = 0;
+    private long endTime = 0;
+    private int count = 0;
+    private double money = 0.00;
+    private String username = "";
+    private String phone = "";
+    private String note = "";
+    private long createTime = 0;
+    private long updateTime = 0;
+
+    private UserEntity user;
+    private RouteEntity route;
+    private DestinationEntity destination;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @JsonProperty("id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getId() {
         return id;
     }
@@ -32,7 +46,21 @@ public class OrderEntity {
     }
 
     @Basic
+    @Column(name = "user_id", nullable = false)
+    @JsonProperty("user_id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    @Basic
     @Column(name = "dest_id", nullable = false)
+    @JsonProperty("dest_id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getDestId() {
         return destId;
     }
@@ -43,6 +71,8 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "route_id", nullable = false)
+    @JsonProperty("route_id")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getRouteId() {
         return routeId;
     }
@@ -53,6 +83,8 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "begin_time", nullable = false)
+    @JsonProperty("begin_time")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getBeginTime() {
         return beginTime;
     }
@@ -63,6 +95,8 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "end_time", nullable = false)
+    @JsonProperty("end_time")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getEndTime() {
         return endTime;
     }
@@ -73,6 +107,8 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "count", nullable = false)
+    @JsonProperty("count")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public int getCount() {
         return count;
     }
@@ -83,6 +119,8 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "money", nullable = false, precision = 0)
+    @JsonProperty("money")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public double getMoney() {
         return money;
     }
@@ -93,6 +131,8 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "username", nullable = false, length = 99)
+    @JsonProperty("username")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getUsername() {
         return username;
     }
@@ -103,6 +143,8 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "phone", nullable = false, length = 99)
+    @JsonProperty("phone")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getPhone() {
         return phone;
     }
@@ -113,6 +155,8 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "note", nullable = false, length = 255)
+    @JsonProperty("note")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getNote() {
         return note;
     }
@@ -123,6 +167,8 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "create_time", nullable = false)
+    @JsonProperty("create_time")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getCreateTime() {
         return createTime;
     }
@@ -133,12 +179,53 @@ public class OrderEntity {
 
     @Basic
     @Column(name = "update_time", nullable = false)
+    @JsonProperty("update_time")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getUpdateTime() {
         return updateTime;
     }
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+    @OneToOne
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @JsonProperty("user")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    @OneToOne
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "route_id", insertable = false, updatable = false)
+    @JsonProperty("route")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public RouteEntity getRoute() {
+        return route;
+    }
+
+    public void setRoute(RouteEntity route) {
+        this.route = route;
+    }
+
+    @OneToOne
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "dest_id", insertable = false, updatable = false)
+    @JsonProperty("destination")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public DestinationEntity getDestination() {
+        return destination;
+    }
+
+    public void setDestination(DestinationEntity destination) {
+        this.destination = destination;
     }
 
     @Override

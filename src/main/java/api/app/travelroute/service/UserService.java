@@ -1,5 +1,6 @@
 package api.app.travelroute.service;
 
+import api.app.travelroute.entity.Role;
 import api.app.travelroute.entity.UserEntity;
 import api.app.travelroute.repository.UserRepository;
 import api.base.common.PasswordHash;
@@ -10,6 +11,9 @@ import api.base.exception.LoginFailException;
 import api.base.exception.NotExistsException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,17 +28,17 @@ import java.security.spec.InvalidKeySpecException;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    UserRepository userRepo;
 
-    public UserEntity addUser(String username, String name, String phone, String password, String email) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public UserEntity addUser(String username, String name, String phone, String password, String avatar, String email, String intro, Role role) throws InvalidKeySpecException, NoSuchAlgorithmException {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(phone) || StringUtils.isBlank(name) || StringUtils.isBlank(password)) {
             throw new InvalidParamsException("params can not be blank");
         }
-        UserEntity userEntity = userRepository.findByUsername(username);
+        UserEntity userEntity = userRepo.findByUsername(username);
         if (userEntity != null) {
             throw new ExistsException("username exists.");
         }
-        userEntity = userRepository.findByPhone(phone);
+        userEntity = userRepo.findByPhone(phone);
         if (userEntity != null) {
             throw new ExistsException("phone has been taken.");
         }
@@ -43,15 +47,23 @@ public class UserService {
         userEntity.setPhone(phone);
         userEntity.setUsername(username);
         userEntity.setEmail(email);
+        userEntity.setAvatar(avatar);
         userEntity.setPassword(PasswordHash.createHash(password));
+        userEntity.setIntro(intro);
+        userEntity.setRole(role);
         userEntity.setCreateTime(Util.time());
         userEntity.setUpdateTime(userEntity.getCreateTime());
 
-        return userRepository.save(userEntity);
+        return userRepo.save(userEntity);
+    }
+
+    public Page<UserEntity> getUserList(Specification<UserEntity> specification, Pageable pageable) {
+
+        return userRepo.findAll(specification, pageable);
     }
 
     public UserEntity validateByUsername(String username, String password) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        UserEntity user = userRepository.findByUsername(username);
+        UserEntity user = userRepo.findByUsername(username);
         if (user == null || !PasswordHash.validatePassword(password, user.getPassword())) {
             throw new LoginFailException();
         }
@@ -59,15 +71,15 @@ public class UserService {
     }
 
     public UserEntity findByUsername(String username) {
-        UserEntity user = userRepository.findByUsername(username);
+        UserEntity user = userRepo.findByUsername(username);
         if (user == null) {
             throw new NotExistsException();
         }
         return user;
     }
 
-    public UserEntity update(String username, String password, String phone) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        UserEntity userEntity = userRepository.findByUsername(username);
+    public UserEntity update(String username, String password, String phone, String email, String avatar, String intro) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        UserEntity userEntity = userRepo.findByUsername(username);
         if (userEntity == null) {
             throw new NotExistsException();
         }
@@ -78,17 +90,28 @@ public class UserService {
         }
         if (StringUtils.isNotBlank(phone)) {
             hasChanged = true;
-            UserEntity other = userRepository.findByPhone(phone);
+            UserEntity other = userRepo.findByPhone(phone);
             if (other != null) {
                 throw new ExistsException("phone has been taken.");
             }
             userEntity.setPhone(phone);
         }
+        if (StringUtils.isNotBlank(email)) {
+            hasChanged = true;
+            userEntity.setEmail(email);
+        }
+        if (StringUtils.isNotBlank(avatar)) {
+            hasChanged = true;
+            userEntity.setAvatar(avatar);
+        }
+        if (StringUtils.isNotBlank(intro)) {
+            hasChanged = true;
+            userEntity.setIntro(intro);
+        }
         if (hasChanged) {
             userEntity.setUpdateTime(Util.time());
-            return userRepository.save(userEntity);
-        } else {
-            throw new InvalidParamsException();
+            return userRepo.save(userEntity);
         }
+        throw new InvalidParamsException();
     }
 }
