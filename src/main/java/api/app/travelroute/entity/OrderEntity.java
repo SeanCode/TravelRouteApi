@@ -25,8 +25,15 @@ public class OrderEntity {
     private String username = "";
     private String phone = "";
     private String note = "";
+    private String reply = "";
+    private int status = STATUS_INIT;
     private long createTime = 0;
     private long updateTime = 0;
+
+    public static int STATUS_INIT = 0;
+    public static int STATUS_CANCEL = -1;
+    public static int STATUS_INVALID = -2;
+    public static int STATUS_SUCCESS = 1;
 
     private UserEntity user;
     private RouteEntity route;
@@ -166,6 +173,30 @@ public class OrderEntity {
     }
 
     @Basic
+    @Column(name = "status", nullable = false)
+    @JsonProperty("status")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @Basic
+    @Column(name = "reply", nullable = false, length = 255)
+    @JsonProperty("reply")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getReply() {
+        return reply;
+    }
+
+    public void setReply(String reply) {
+        this.reply = reply;
+    }
+
+    @Basic
     @Column(name = "create_time", nullable = false)
     @JsonProperty("create_time")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
@@ -241,6 +272,7 @@ public class OrderEntity {
         if (beginTime != that.beginTime) return false;
         if (endTime != that.endTime) return false;
         if (count != that.count) return false;
+        if (status != that.status) return false;
         if (Double.compare(that.money, money) != 0) return false;
         if (createTime != that.createTime) return false;
         if (updateTime != that.updateTime) return false;
@@ -261,6 +293,7 @@ public class OrderEntity {
         result = 31 * result + (int) (beginTime ^ (beginTime >>> 32));
         result = 31 * result + (int) (endTime ^ (endTime >>> 32));
         result = 31 * result + count;
+        result = 31 * result + status;
         temp = Double.doubleToLongBits(money);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (username != null ? username.hashCode() : 0);
