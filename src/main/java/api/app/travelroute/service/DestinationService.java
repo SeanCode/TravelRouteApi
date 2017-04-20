@@ -77,5 +77,12 @@ public class DestinationService {
         }
         return dest;
     }
+    public void delete(long id) {
+        DestinationEntity dest = destRepo.findOne(id);
+        if (dest == null) {
+            throw new NotExistsException();
+        }
+        destRepo.delete(dest);
+    }
 
 }

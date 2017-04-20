@@ -103,7 +103,7 @@ public class RouteEntity {
     @Basic
     @Column(name = "notice", nullable = false, length = 255)
     @JsonProperty("notice")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @JsonView({OutputEntityJsonView.Detail.class})
     public String getNotice() {
         return notice;
     }

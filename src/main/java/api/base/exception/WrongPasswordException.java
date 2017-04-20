@@ -6,6 +6,6 @@ package api.base.exception;
 public class WrongPasswordException extends BaseException {
 
     public WrongPasswordException() {
-        super(WRONG_PASSWORD, "wrong password");
+        super(WRONG_PASSWORD, "密码错误");
     }
 }

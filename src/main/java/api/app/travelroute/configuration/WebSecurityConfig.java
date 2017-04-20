@@ -35,6 +35,7 @@ public class WebSecurityConfig {
 
             //这里只配置访问权限
             http.authorizeRequests()
+                    .antMatchers(HttpMethod.OPTIONS).permitAll()
                     .antMatchers("/api/v1/user/register").permitAll()//user api除了注册其他都需要认证
                     .antMatchers("/api/v1/user/**").authenticated()
                     .antMatchers("/api/v1/order/**").authenticated()//order api需要认证
@@ -43,7 +44,7 @@ public class WebSecurityConfig {
                     .and()
                     .antMatcher("/api/v1/route/**").authorizeRequests().antMatchers(HttpMethod.GET).permitAll().anyRequest().hasAnyRole(String.valueOf(ROLE_ADMIN), String.valueOf(ROLE_GUIDE))//路线 api
                     .and()
-                    .antMatcher("/api/**").authorizeRequests().anyRequest().authenticated()//默认其他所有api均需认证
+                    .antMatcher("/api/**").authorizeRequests().antMatchers(HttpMethod.OPTIONS).permitAll().anyRequest().authenticated()//默认其他所有api均需认证
                     .and()
                     .csrf().disable()
                     .httpBasic();

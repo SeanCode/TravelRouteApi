@@ -38,7 +38,7 @@ public class RouteController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse saveRoute(@RequestParam(value = "dest_id", required = false, defaultValue = "0") long destId,
-                                  @RequestParam(value = "route_id", required = false, defaultValue = "0") long routeId,
+                                  @RequestParam(value = "id", required = false, defaultValue = "0") long id,
                                   @RequestParam(value = "name", required = false, defaultValue = "null") String name,
                                   @RequestParam(value = "price", required = false, defaultValue = "null") Double price,
                                   @RequestParam(value = "intro", required = false, defaultValue = "null") String intro,
@@ -46,7 +46,16 @@ public class RouteController {
                                   @RequestParam(value = "notice", required = false, defaultValue = "null") String notice,
                                   @RequestParam(value = "img", required = false, defaultValue = "null") String img) {
 
-        return DataResponse.create().put("route", routeService.saveRoute(destId, routeId, name, price, intro, info, notice, img));
+        return DataResponse.create().put("route", routeService.saveRoute(destId, id, name, price, intro, info, notice, img));
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse deleteRoute(@RequestParam("id") long id) {
+
+        routeService.delete(id);
+        return DataResponse.create();
     }
 
 }

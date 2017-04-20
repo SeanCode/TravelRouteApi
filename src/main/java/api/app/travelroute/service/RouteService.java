@@ -29,6 +29,11 @@ public class RouteService {
         return routeRepo.findOne(routeId);
     }
 
+    public void delete(long id) {
+
+        routeRepo.delete(id);
+    }
+
     public RouteEntity saveRoute(long destId, long routeId, String name, Double price, String intro, String info, String notice, String img) {
         if (routeId == 0) {
             return createRoute(destId, name, price, intro, info, notice, img);

@@ -35,14 +35,13 @@ public class OrderController {
     public DataResponse createOrder(@RequestParam("dest_id") long destId,
                                     @RequestParam("route_id") long routeId,
                                     @RequestParam("begin_time") long beginTime,
-                                    @RequestParam("end_time") long endTime,
                                     @RequestParam("count") int count,
                                     @RequestParam("money") double money,
                                     @RequestParam("username") String username,
                                     @RequestParam("phone") String phone,
                                     @RequestParam("note") String note) {
 
-        return DataResponse.create().put("order", orderService.createOrder(authenticationService.getUserAuth().getUserId(), destId, routeId, beginTime, endTime, count, money, username, phone, note));
+        return DataResponse.create().put("order", orderService.createOrder(authenticationService.getUserAuth().getUserId(), destId, routeId, beginTime, count, money, username, phone, note));
     }
 
     @RequestMapping(value = "/list-created", method = RequestMethod.GET)
@@ -60,11 +59,20 @@ public class OrderController {
         return DataResponse.create().putPage("order_list", orderService.getOrderListReceived(pageable));
     }
 
-    @RequestMapping(value = "/cancel", method = RequestMethod.POST)
+    @RequestMapping(value = "/update-status", method = RequestMethod.POST)
     @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse updateOrderStatus(@RequestParam("id") long id) {
+    public DataResponse updateOrderStatus(@RequestParam("id") long id,
+                                          @RequestParam("status") int status) {
 
-        return DataResponse.create().put("order", orderService.cancelOrder(authenticationService.getUserAuth().getUserId(), id));
+        return DataResponse.create().put("order", orderService.updateOrderStatus(authenticationService.getUserAuth().getUser(), id, status));
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse deleteOrder(@RequestParam("id") long id) {
+
+        orderService.delete(id, authenticationService.getUserAuth().getUserId());
+        return DataResponse.create();
     }
 
 }

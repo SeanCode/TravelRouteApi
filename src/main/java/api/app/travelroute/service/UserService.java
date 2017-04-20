@@ -5,11 +5,9 @@ import api.app.travelroute.entity.UserEntity;
 import api.app.travelroute.repository.UserRepository;
 import api.base.common.PasswordHash;
 import api.base.common.Util;
-import api.base.exception.ExistsException;
-import api.base.exception.InvalidParamsException;
-import api.base.exception.LoginFailException;
-import api.base.exception.NotExistsException;
+import api.base.exception.*;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +24,8 @@ import java.security.spec.InvalidKeySpecException;
 @Service
 @Transactional
 public class UserService {
+
+    private static Logger logger = org.slf4j.LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     UserRepository userRepo;
@@ -78,7 +78,15 @@ public class UserService {
         return user;
     }
 
-    public UserEntity update(String username, String password, String phone, String email, String avatar, String intro) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public void delete(String username) {
+        UserEntity user = userRepo.findByUsername(username);
+        if (user == null) {
+            throw new NotExistsException();
+        }
+        userRepo.delete(user);
+    }
+
+    public UserEntity update(String username, String name, String password, String phone, String email, String avatar, String intro) throws InvalidKeySpecException, NoSuchAlgorithmException {
         UserEntity userEntity = userRepo.findByUsername(username);
         if (userEntity == null) {
             throw new NotExistsException();
@@ -86,13 +94,21 @@ public class UserService {
         boolean hasChanged = false;
         if (StringUtils.isNotBlank(password)) {
             hasChanged = true;
-            userEntity.setPassword(PasswordHash.createHash(password));
+            if (PasswordHash.validatePassword(password, userEntity.getPassword())) {
+                userEntity.setPassword(PasswordHash.createHash(password));
+            } else {
+                throw new WrongPasswordException();
+            }
+        }
+        if (StringUtils.isNotBlank(name)) {
+            hasChanged = true;
+            userEntity.setName(name);
         }
         if (StringUtils.isNotBlank(phone)) {
             hasChanged = true;
             UserEntity other = userRepo.findByPhone(phone);
             if (other != null) {
-                throw new ExistsException("phone has been taken.");
+                throw new ExistsException("此电话号码已被占用");
             }
             userEntity.setPhone(phone);
         }

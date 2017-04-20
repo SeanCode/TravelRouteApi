@@ -19,7 +19,6 @@ public class OrderEntity {
     private long destId = 0;
     private long routeId = 0;
     private long beginTime = 0;
-    private long endTime = 0;
     private int count = 0;
     private double money = 0.00;
     private String username = "";
@@ -98,18 +97,6 @@ public class OrderEntity {
 
     public void setBeginTime(long beginTime) {
         this.beginTime = beginTime;
-    }
-
-    @Basic
-    @Column(name = "end_time", nullable = false)
-    @JsonProperty("end_time")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
-    public long getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(long endTime) {
-        this.endTime = endTime;
     }
 
     @Basic
@@ -270,7 +257,6 @@ public class OrderEntity {
         if (destId != that.destId) return false;
         if (routeId != that.routeId) return false;
         if (beginTime != that.beginTime) return false;
-        if (endTime != that.endTime) return false;
         if (count != that.count) return false;
         if (status != that.status) return false;
         if (Double.compare(that.money, money) != 0) return false;
@@ -291,7 +277,6 @@ public class OrderEntity {
         result = 31 * result + (int) (destId ^ (destId >>> 32));
         result = 31 * result + (int) (routeId ^ (routeId >>> 32));
         result = 31 * result + (int) (beginTime ^ (beginTime >>> 32));
-        result = 31 * result + (int) (endTime ^ (endTime >>> 32));
         result = 31 * result + count;
         result = 31 * result + status;
         temp = Double.doubleToLongBits(money);

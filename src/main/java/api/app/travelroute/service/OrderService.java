@@ -21,13 +21,12 @@ public class OrderService {
     @Autowired
     OrderRepository orderRepo;
 
-    public OrderEntity createOrder(long userId, long destId, long routeId, long beginTime, long endTime, int count, double money, String username, String phone, String note) {
+    public OrderEntity createOrder(long userId, long destId, long routeId, long beginTime, int count, double money, String username, String phone, String note) {
         OrderEntity order = new OrderEntity();
         order.setUserId(userId);
         order.setDestId(destId);
         order.setRouteId(routeId);
         order.setBeginTime(beginTime);
-        order.setEndTime(endTime);
         order.setCount(count);
         order.setMoney(money);
         order.setUsername(username);
@@ -50,15 +49,28 @@ public class OrderService {
         return orderRepo.findAll(pageable);
     }
 
-    public OrderEntity cancelOrder(long userId, long id) {
+    public OrderEntity updateOrderStatus(UserEntity user, long id, int status) {
+        OrderEntity order = orderRepo.findByIdAndUserId(id, user.getId());
+        if (order == null) {
+            throw new NotExistsException();
+        }
+        if (user.getRole() == Role.ROLE_USER) {
+            if (order.getUserId() != user.getId()) {
+                throw new NotAllowedException();
+            }
+        }
+        order.setStatus(status);
+        order.setUpdateTime(Util.time());
+
+        return orderRepo.save(order);
+    }
+
+    public void delete(long id, long userId) {
         OrderEntity order = orderRepo.findByIdAndUserId(id, userId);
         if (order == null) {
             throw new NotExistsException();
         }
-        order.setStatus(OrderEntity.STATUS_CANCEL);
-        order.setUpdateTime(Util.time());
-
-        return orderRepo.save(order);
+        orderRepo.delete(order);
     }
 
 }

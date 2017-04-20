@@ -66,6 +66,15 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse delete(@RequestParam("username") String username) {
+
+        userService.delete(username);
+        return DataResponse.create();
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @RequestMapping(value = "/user-list", method = RequestMethod.GET)
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse adminList(
@@ -85,13 +94,14 @@ public class UserController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse update(@RequestParam("username") String username,
-                               @RequestParam(value = "password", required = false, defaultValue = "null") String password,
-                               @RequestParam(value = "phone", required = false, defaultValue = "null") String phone,
-                               @RequestParam(value = "email", required = false, defaultValue = "null") String email,
-                               @RequestParam(value = "avatar", required = false, defaultValue = "null") String avatar,
-                               @RequestParam(value = "intro", required = false, defaultValue = "null") String intro) throws InvalidKeySpecException, NoSuchAlgorithmException {
+                               @RequestParam(value = "name", required = false, defaultValue = "") String name,
+                               @RequestParam(value = "password", required = false, defaultValue = "") String password,
+                               @RequestParam(value = "phone", required = false, defaultValue = "") String phone,
+                               @RequestParam(value = "email", required = false, defaultValue = "") String email,
+                               @RequestParam(value = "avatar", required = false, defaultValue = "") String avatar,
+                               @RequestParam(value = "intro", required = false, defaultValue = "") String intro) throws InvalidKeySpecException, NoSuchAlgorithmException {
 
-        return DataResponse.create().put("user", userService.update(username, password, phone, email, avatar, intro));
+        return DataResponse.create().put("user", userService.update(username, name, password, phone, email, avatar, intro));
     }
 
 }

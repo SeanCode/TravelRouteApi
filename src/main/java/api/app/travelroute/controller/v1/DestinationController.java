@@ -47,4 +47,13 @@ public class DestinationController {
         return DataResponse.create().put("destination", destService.saveDestination(id, name, intro, info, dest, img));
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @JsonView(OutputEntityJsonView.Basic.class)
+    public DataResponse delete(@RequestParam("id") long id) {
+
+        destService.delete(id);
+        return DataResponse.create();
+    }
+
 }
