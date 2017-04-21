@@ -1,6 +1,7 @@
 package api.app.travelroute.entity;
 
 import api.base.common.OutputEntityJsonView;
+import api.base.common.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.hibernate.annotations.NotFound;
@@ -12,7 +13,7 @@ import javax.persistence.*;
  * Created by cc on 2017/4/16.
  */
 @Entity
-@Table(name = "order", schema = "travel_grad", catalog = "")
+@Table(name = "[order]", schema = "travel_grad", catalog = "")
 public class OrderEntity {
     private long id;
     private long userId = 0;
@@ -33,6 +34,9 @@ public class OrderEntity {
     public static int STATUS_CANCEL = -1;
     public static int STATUS_INVALID = -2;
     public static int STATUS_SUCCESS = 1;
+
+    private String                 createTimeFormatted;
+    private String                 updateTimeFormatted;
 
     private UserEntity user;
     private RouteEntity route;
@@ -205,6 +209,33 @@ public class OrderEntity {
 
     public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
+    }
+
+
+    @Transient
+    @JsonProperty("create_time_formatted")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getCreateTimeFormatted() {
+
+        createTimeFormatted = Util.getTimeString(getCreateTime());
+        return createTimeFormatted;
+    }
+
+    public void setCreateTimeFormatted(String createTimeFormatted) {
+        this.createTimeFormatted = createTimeFormatted;
+    }
+
+    @Transient
+    @JsonProperty("update_time_formatted")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getUpdateTimeFormatted() {
+
+        updateTimeFormatted = Util.getTimeString(getUpdateTime());
+        return updateTimeFormatted;
+    }
+
+    public void setUpdateTimeFormatted(String updateTimeFormatted) {
+        this.updateTimeFormatted = updateTimeFormatted;
     }
 
     @OneToOne

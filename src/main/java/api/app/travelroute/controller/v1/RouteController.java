@@ -5,6 +5,9 @@ import api.base.common.DataResponse;
 import api.base.common.OutputEntityJsonView;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +24,10 @@ public class RouteController {
     RouteService routeService;
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getRouteList(@RequestParam("dest_id") long destId) {
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getRouteList(@RequestParam("dest_id") long destId, @PageableDefault(sort = {"createTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
 
-        return DataResponse.create().put("route_list", routeService.getRouteListByDestId(destId));
+        return DataResponse.create().putPage("route_list", routeService.getRouteListByDestId(destId, pageable));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -39,12 +42,12 @@ public class RouteController {
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse saveRoute(@RequestParam(value = "dest_id", required = false, defaultValue = "0") long destId,
                                   @RequestParam(value = "id", required = false, defaultValue = "0") long id,
-                                  @RequestParam(value = "name", required = false, defaultValue = "null") String name,
-                                  @RequestParam(value = "price", required = false, defaultValue = "null") Double price,
-                                  @RequestParam(value = "intro", required = false, defaultValue = "null") String intro,
-                                  @RequestParam(value = "info", required = false, defaultValue = "null") String info,
-                                  @RequestParam(value = "notice", required = false, defaultValue = "null") String notice,
-                                  @RequestParam(value = "img", required = false, defaultValue = "null") String img) {
+                                  @RequestParam(value = "name", required = false) String name,
+                                  @RequestParam(value = "price", required = false) Double price,
+                                  @RequestParam(value = "intro", required = false) String intro,
+                                  @RequestParam(value = "info", required = false) String info,
+                                  @RequestParam(value = "notice", required = false) String notice,
+                                  @RequestParam(value = "img", required = false) String img) {
 
         return DataResponse.create().put("route", routeService.saveRoute(destId, id, name, price, intro, info, notice, img));
     }

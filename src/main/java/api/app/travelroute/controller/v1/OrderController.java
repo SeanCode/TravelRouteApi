@@ -32,16 +32,14 @@ public class OrderController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @JsonView(OutputEntityJsonView.Detail.class)
-    public DataResponse createOrder(@RequestParam("dest_id") long destId,
-                                    @RequestParam("route_id") long routeId,
+    public DataResponse createOrder(@RequestParam("route_id") long routeId,
                                     @RequestParam("begin_time") long beginTime,
                                     @RequestParam("count") int count,
-                                    @RequestParam("money") double money,
                                     @RequestParam("username") String username,
                                     @RequestParam("phone") String phone,
                                     @RequestParam("note") String note) {
 
-        return DataResponse.create().put("order", orderService.createOrder(authenticationService.getUserAuth().getUserId(), destId, routeId, beginTime, count, money, username, phone, note));
+        return DataResponse.create().put("order", orderService.createOrder(authenticationService.getUserAuth().getUserId(), routeId, beginTime, count, username, phone, note));
     }
 
     @RequestMapping(value = "/list-created", method = RequestMethod.GET)

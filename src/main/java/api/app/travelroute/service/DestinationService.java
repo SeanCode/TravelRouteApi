@@ -7,9 +7,9 @@ import api.base.exception.InvalidParamsException;
 import api.base.exception.NotExistsException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Created by cc on 2017/4/17.
@@ -20,9 +20,14 @@ public class DestinationService {
     @Autowired
     DestinationRepository destRepo;
 
-    public List<DestinationEntity> queryDestination(String dest) {
+    public Page<DestinationEntity> queryDestination(String dest, Pageable pageable) {
 
-        return destRepo.findByDestLikeOrderByUpdateTimeDesc(dest);
+        return destRepo.findByDestLike(dest, pageable);
+    }
+
+    public Page<DestinationEntity> getDestinationList(Pageable pageable) {
+
+        return destRepo.findAll(pageable);
     }
 
     public DestinationEntity saveDestination(long id, String name, String intro, String info, String dest, String img) {
@@ -34,19 +39,19 @@ public class DestinationService {
     }
 
     private DestinationEntity updateDestination(DestinationEntity destination, String name, String intro, String info, String dest, String img) {
-        if (name != null) {
+        if (StringUtils.isNotBlank(name)) {
             destination.setName(name);
         }
-        if (intro != null) {
+        if (StringUtils.isNotBlank(intro)) {
             destination.setIntro(intro);
         }
-        if (info != null) {
+        if (StringUtils.isNotBlank(info)) {
             destination.setInfo(info);
         }
-        if (dest != null) {
+        if (StringUtils.isNotBlank(dest)) {
             destination.setDest(dest);
         }
-        if (img != null) {
+        if (StringUtils.isNotBlank(img)) {
             destination.setImg(img);
         }
         destination.setUpdateTime(Util.time());

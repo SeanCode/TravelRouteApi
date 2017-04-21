@@ -26,6 +26,9 @@ public class DestinationEntity {
 
     private List<String> imgList;
 
+    private String                 thumbnails;
+    private String                 createTimeFormatted;
+    private String                 updateTimeFormatted;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -52,7 +55,7 @@ public class DestinationEntity {
     }
 
     @Basic
-    @Column(name = "intro", nullable = false, length = 299)
+    @Column(name = "intro", nullable = false, length = 999)
     @JsonProperty("intro")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getIntro() {
@@ -64,7 +67,7 @@ public class DestinationEntity {
     }
 
     @Basic
-    @Column(name = "info", nullable = false, length = 255)
+    @Column(name = "info", nullable = false, length = 999)
     @JsonProperty("info")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getInfo() {
@@ -88,21 +91,33 @@ public class DestinationEntity {
     }
 
     @Basic
-    @Column(name = "img", nullable = false, length = 299)
-    @JsonProperty("img")
-    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    @Column(name = "img", nullable = false, length = 1999)
     public String getImg() {
 
-        imgList = Util.explodeUrlString(img);
-        return imgList.size() > 0 ? imgList.get(0) : "";
+        return img;
     }
 
     public void setImg(String img) {
         this.img = img;
     }
 
+    @Transient
+    @JsonProperty("img")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getThumbnails() {
+
+        imgList = Util.explodeUrlString(img);
+        thumbnails = imgList.size() > 0 ? imgList.get(0) : "";
+        return thumbnails;
+    }
+
+    public void setThumbnails(String thumbnails) {
+        this.thumbnails = thumbnails;
+    }
+
     @Basic
     @Column(name = "create_time", nullable = false)
+    @JsonProperty("create_time")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getCreateTime() {
         return createTime;
@@ -114,6 +129,7 @@ public class DestinationEntity {
 
     @Basic
     @Column(name = "update_time", nullable = false)
+    @JsonProperty("update_time")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public long getUpdateTime() {
         return updateTime;
@@ -133,6 +149,32 @@ public class DestinationEntity {
 
     public void setImgList(List<String> imgList) {
         this.imgList = imgList;
+    }
+
+    @Transient
+    @JsonProperty("create_time_formatted")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getCreateTimeFormatted() {
+
+        createTimeFormatted = Util.getTimeString(getCreateTime());
+        return createTimeFormatted;
+    }
+
+    public void setCreateTimeFormatted(String createTimeFormatted) {
+        this.createTimeFormatted = createTimeFormatted;
+    }
+
+    @Transient
+    @JsonProperty("update_time_formatted")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getUpdateTimeFormatted() {
+
+        updateTimeFormatted = Util.getTimeString(getUpdateTime());
+        return updateTimeFormatted;
+    }
+
+    public void setUpdateTimeFormatted(String updateTimeFormatted) {
+        this.updateTimeFormatted = updateTimeFormatted;
     }
 
     @Override

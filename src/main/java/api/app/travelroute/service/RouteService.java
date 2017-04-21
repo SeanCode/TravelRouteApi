@@ -6,6 +6,8 @@ import api.base.common.Util;
 import api.base.exception.InvalidParamsException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +21,9 @@ public class RouteService {
     @Autowired
     RouteRepository routeRepo;
 
-    public List<RouteEntity> getRouteListByDestId(long destId) {
+    public Page<RouteEntity> getRouteListByDestId(long destId, Pageable pageable) {
 
-        return routeRepo.findByDestId(destId);
+        return routeRepo.findByDestId(destId, pageable);
     }
 
     public RouteEntity getRoute(long routeId) {
@@ -62,22 +64,22 @@ public class RouteService {
     }
 
     private RouteEntity updateRoute(RouteEntity route, String name, Double price, String intro, String info, String notice, String img) {
-        if (name != null) {
+        if (StringUtils.isNotBlank(name)) {
             route.setName(name);
         }
         if (price != null) {
             route.setPrice(price);
         }
-        if (intro != null) {
+        if (StringUtils.isNotBlank(intro)) {
             route.setIntro(intro);
         }
-        if (info != null) {
+        if (StringUtils.isNotBlank(info)) {
             route.setInfo(info);
         }
-        if (notice != null) {
+        if (StringUtils.isNotBlank(notice)) {
             route.setNotice(notice);
         }
-        if (img != null) {
+        if (StringUtils.isNotBlank(img)) {
             route.setImg(img);
         }
         route.setUpdateTime(Util.time());

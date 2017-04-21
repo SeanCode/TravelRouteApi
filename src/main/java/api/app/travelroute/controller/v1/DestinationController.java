@@ -5,6 +5,9 @@ import api.base.common.DataResponse;
 import api.base.common.OutputEntityJsonView;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +23,18 @@ public class DestinationController {
     @Autowired
     DestinationService destService;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
+    @RequestMapping(value = "/query", method = RequestMethod.GET)
     @JsonView(OutputEntityJsonView.Basic.class)
-    public DataResponse getDestinationList(@RequestParam("dest") String query) {
+    public DataResponse queryDestination(@RequestParam("dest") String query, @PageableDefault(sort = {"createTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
 
-        return DataResponse.create().put("dest_list", destService.queryDestination(query));
+        return DataResponse.create().putPage("dest_list", destService.queryDestination(query, pageable));
+    }
+
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @JsonView(OutputEntityJsonView.Detail.class)
+    public DataResponse getDestinationList(@PageableDefault(sort = {"createTime", "updateTime"}, direction = Sort.Direction.DESC) Pageable pageable) {
+
+        return DataResponse.create().putPage("dest_list", destService.getDestinationList(pageable));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -38,11 +48,11 @@ public class DestinationController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse saveDest(@RequestParam(value = "id", required = false, defaultValue = "0") long id,
-                                 @RequestParam(value = "name", required = false, defaultValue = "null") String name,
-                                 @RequestParam(value = "intro", required = false, defaultValue = "null") String intro,
-                                 @RequestParam(value = "info", required = false, defaultValue = "null") String info,
-                                 @RequestParam(value = "dest", required = false, defaultValue = "null") String dest,
-                                 @RequestParam(value = "img", required = false, defaultValue = "null") String img) {
+                                 @RequestParam(value = "name", required = false) String name,
+                                 @RequestParam(value = "intro", required = false) String intro,
+                                 @RequestParam(value = "info", required = false) String info,
+                                 @RequestParam(value = "dest", required = false) String dest,
+                                 @RequestParam(value = "img", required = false) String img) {
 
         return DataResponse.create().put("destination", destService.saveDestination(id, name, intro, info, dest, img));
     }

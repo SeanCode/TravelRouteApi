@@ -2,8 +2,10 @@ package api.app.travelroute.service;
 
 import api.app.travelroute.entity.OrderEntity;
 import api.app.travelroute.entity.Role;
+import api.app.travelroute.entity.RouteEntity;
 import api.app.travelroute.entity.UserEntity;
 import api.app.travelroute.repository.OrderRepository;
+import api.app.travelroute.repository.RouteRepository;
 import api.base.common.Util;
 import api.base.exception.NotAllowedException;
 import api.base.exception.NotExistsException;
@@ -21,14 +23,21 @@ public class OrderService {
     @Autowired
     OrderRepository orderRepo;
 
-    public OrderEntity createOrder(long userId, long destId, long routeId, long beginTime, int count, double money, String username, String phone, String note) {
+    @Autowired
+    RouteRepository routeRepo;
+
+    public OrderEntity createOrder(long userId, long routeId, long beginTime, int count, String username, String phone, String note) {
+        RouteEntity route = routeRepo.findOne(routeId);
+        if (route == null) {
+            throw new NotExistsException();
+        }
         OrderEntity order = new OrderEntity();
         order.setUserId(userId);
-        order.setDestId(destId);
+        order.setDestId(route.getDestId());
         order.setRouteId(routeId);
         order.setBeginTime(beginTime);
         order.setCount(count);
-        order.setMoney(money);
+        order.setMoney(count * route.getPrice());
         order.setUsername(username);
         order.setPhone(phone);
         order.setNote(note);

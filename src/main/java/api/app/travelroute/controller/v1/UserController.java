@@ -75,7 +75,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    @RequestMapping(value = "/user-list", method = RequestMethod.GET)
+    @RequestMapping(value = "/list", method = RequestMethod.GET)
     @JsonView(OutputEntityJsonView.Detail.class)
     public DataResponse adminList(
             @Spec(path = "role", spec = Equal.class) Specification<UserEntity> specification,

@@ -4,6 +4,8 @@ import api.base.common.OutputEntityJsonView;
 import api.base.common.Util;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,6 +28,11 @@ public class RouteEntity {
     private long updateTime = 0;
 
     private List<String> imgList;
+
+    private String thumbnails;
+    private String createTimeFormatted;
+    private String updateTimeFormatted;
+    private DestinationEntity destination;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -77,7 +84,7 @@ public class RouteEntity {
     }
 
     @Basic
-    @Column(name = "intro", nullable = false, length = 199)
+    @Column(name = "intro", nullable = false, length = 999)
     @JsonProperty("intro")
     @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
     public String getIntro() {
@@ -89,7 +96,7 @@ public class RouteEntity {
     }
 
     @Basic
-    @Column(name = "info", nullable = false, length = 255)
+    @Column(name = "info", nullable = false, length = 999)
     @JsonProperty("info")
     @JsonView({OutputEntityJsonView.Detail.class})
     public String getInfo() {
@@ -101,7 +108,7 @@ public class RouteEntity {
     }
 
     @Basic
-    @Column(name = "notice", nullable = false, length = 255)
+    @Column(name = "notice", nullable = false, length = 999)
     @JsonProperty("notice")
     @JsonView({OutputEntityJsonView.Detail.class})
     public String getNotice() {
@@ -113,17 +120,41 @@ public class RouteEntity {
     }
 
     @Basic
-    @Column(name = "img", nullable = false, length = 255)
-    @JsonProperty("img")
-    @JsonView({OutputEntityJsonView.Basic.class})
+    @Column(name = "img", nullable = false, length = 1999)
     public String getImg() {
 
-        imgList = Util.explodeUrlString(img);
-        return imgList.size() > 0 ? imgList.get(0) : "";
+        return img;
     }
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    @Transient
+    @JsonProperty("img")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getThumbnails() {
+
+        imgList = Util.explodeUrlString(img);
+        thumbnails = imgList.size() > 0 ? imgList.get(0) : "";
+        return thumbnails;
+    }
+
+    public void setThumbnails(String thumbnails) {
+        this.thumbnails = thumbnails;
+    }
+
+    @OneToOne
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "dest_id", insertable = false, updatable = false)
+    @JsonProperty("dest")
+    @JsonView({OutputEntityJsonView.Detail.class})
+    public DestinationEntity getDestination() {
+        return destination;
+    }
+
+    public void setDestination(DestinationEntity destination) {
+        this.destination = destination;
     }
 
     @Basic
@@ -160,6 +191,32 @@ public class RouteEntity {
 
     public void setImgList(List<String> imgList) {
         this.imgList = imgList;
+    }
+
+    @Transient
+    @JsonProperty("create_time_formatted")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getCreateTimeFormatted() {
+
+        createTimeFormatted = Util.getTimeString(getCreateTime());
+        return createTimeFormatted;
+    }
+
+    public void setCreateTimeFormatted(String createTimeFormatted) {
+        this.createTimeFormatted = createTimeFormatted;
+    }
+
+    @Transient
+    @JsonProperty("update_time_formatted")
+    @JsonView({OutputEntityJsonView.Basic.class, OutputEntityJsonView.Detail.class})
+    public String getUpdateTimeFormatted() {
+
+        updateTimeFormatted = Util.getTimeString(getUpdateTime());
+        return updateTimeFormatted;
+    }
+
+    public void setUpdateTimeFormatted(String updateTimeFormatted) {
+        this.updateTimeFormatted = updateTimeFormatted;
     }
 
     @Override

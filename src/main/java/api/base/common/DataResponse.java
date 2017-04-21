@@ -37,6 +37,7 @@ public class DataResponse {
     public DataResponse putPage(String key, Page page) {
         this.data.put(key, page.getContent());
         this.data.put("totalPages", page.getTotalPages());
+        this.data.put("totalElements", page.getTotalElements());
         this.data.put("number", page.getNumber());
         return this;
     }
