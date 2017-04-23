@@ -94,11 +94,7 @@ public class UserService {
         boolean hasChanged = false;
         if (StringUtils.isNotBlank(password)) {
             hasChanged = true;
-            if (PasswordHash.validatePassword(password, userEntity.getPassword())) {
-                userEntity.setPassword(PasswordHash.createHash(password));
-            } else {
-                throw new WrongPasswordException();
-            }
+            userEntity.setPassword(PasswordHash.createHash(password));
         }
         if (StringUtils.isNotBlank(name)) {
             hasChanged = true;
